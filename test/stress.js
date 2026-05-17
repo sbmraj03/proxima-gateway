@@ -1,5 +1,5 @@
 import http from 'k6/http';
-import { sleep } from 'k6';
+import { check, sleep } from 'k6';
 
 export const options = {
     stages: [
@@ -11,11 +11,9 @@ export const options = {
 
 export default function () {
     const res = http.get('http://3.109.56.77/api/public');
-
-    if (res.status !== 200) {
-        console.log(`FAILED STATUS = ${res.status}`);
-        console.log(`BODY = ${res.body}`);
-    }
-
+    check(res, {
+        'status is 200': (r) => r.status === 200,
+        'response time < 500ms': (r) => r.timings.duration < 500,
+    });
     sleep(1);
 }
