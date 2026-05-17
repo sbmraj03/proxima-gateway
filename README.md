@@ -2,7 +2,16 @@
 
 A production-grade API Gateway built from scratch in Node.js — featuring reverse proxying, JWT authentication, rate limiting, circuit breaking, load balancing, and a real-time analytics dashboard.
 
-> Built after 6 months of hands-on experience working on a large-scale AWS Lambda-based Account Aggregator platform at Equal Identity (OneMoney).
+> Built during my backend internship at Equal Identity (OneMoney), where I worked on a large-scale AWS Lambda-based Account Aggregator platform - and wanted to deeply understand the infrastructure layer by building it from scratch.
+
+---
+
+## Live Demo
+
+| | URL |
+|--|--|
+| **Gateway** | `http://3.109.56.77:3000` |
+| **Dashboard** | `http://3.109.56.77/dashboard` |
 
 ---
 
@@ -11,7 +20,7 @@ A production-grade API Gateway built from scratch in Node.js — featuring rever
 | Feature | Description |
 |--------|-------------|
 | **Reverse Proxy** | Forward requests to backend services with full header passthrough |
-| **JWT Authentication** | Per-route auth — some routes public, some protected |
+| **JWT Authentication** | Per-route auth - some routes public, some protected |
 | **Rate Limiting** | Token Bucket algorithm, configurable per route |
 | **Load Balancer** | Round Robin across multiple backend instances |
 | **Circuit Breaker** | Auto open/half-open/close with configurable thresholds |
@@ -19,33 +28,36 @@ A production-grade API Gateway built from scratch in Node.js — featuring rever
 | **Retry Logic** | Exponential backoff — up to 2 retries on failure |
 | **Timeout Handling** | 5s request timeout with 504 Gateway Timeout response |
 | **Request ID Tracing** | UUID per request, propagated to backend via `x-request-id` header |
-| **Structured Logging** | Winston — JSON logs with timestamp, level, requestId |
-| **Analytics Persistence** | Analytics data persisted in Redis — survives restarts |
-| **Real-time Dashboard** | React + Recharts — live request stats, circuit breaker status, time-series graph |
+| **Structured Logging** | Winston - JSON logs with timestamp, level, requestId |
+| **Analytics Persistence** | Analytics data persisted in Redis - survives restarts |
+| **Real-time Dashboard** | React + Recharts - live request stats, circuit breaker status, time-series graph |
+| **Nginx Edge Server** | Static file serving + routing via Nginx reverse proxy |
 | **Docker** | Fully containerized with Docker Compose |
 | **AWS EC2** | Deployed and running on AWS EC2 |
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
-Client Request
-      ↓
-Proxima Gateway (Port 3000)
-      ↓
-┌─────────────────────────────┐
-│  1. Parse Request            │
-│  2. Rate Limit Check (Redis) │
-│  3. Route Match              │
-│  4. JWT Auth (if required)   │
-│  5. Circuit Breaker Check    │
-│  6. Load Balancer            │
-│  7. Forward to Backend       │
-│  8. Retry on failure         │
-└─────────────────────────────┘
-      ↓
-Backend Services (4001 / 4002)
+Internet
+    ↓
+Nginx (port 80)
+    ├── /dashboard  →  React Dashboard (static files)
+    └── /           →  Proxima Gateway (port 3000)
+                            ↓
+                ┌─────────────────────────────┐
+                │  1. Parse Request            │
+                │  2. Rate Limit Check (Redis) │
+                │  3. Route Match              │
+                │  4. JWT Auth (if required)   │
+                │  5. Circuit Breaker Check    │
+                │  6. Load Balancer            │
+                │  7. Forward to Backend       │
+                │  8. Retry on failure         │
+                └─────────────────────────────┘
+                            ↓
+                Backend Services (4001 / 4002)
 ```
 
 ---
@@ -72,13 +84,14 @@ proxima-gateway/
   dashboard/            # React + Tailwind + Recharts dashboard
   config/
     routes.json         # Route configuration
+  nginx.conf            # Nginx edge server config
   docker-compose.yml
   Dockerfile
 ```
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 Routes are configured in `config/routes.json`:
 
@@ -114,10 +127,14 @@ REDIS_URL=redis://localhost:6379
 ```bash
 git clone https://github.com/sbmraj03/proxima-gateway
 cd proxima-gateway
+cp .env.docker.example .env.docker
 docker-compose up --build
 ```
 
-Proxima will be available at `http://localhost:3000`
+| Service | URL |
+|---------|-----|
+| Gateway | `http://localhost:3000` |
+| Dashboard | `http://localhost/dashboard` |
 
 ---
 
@@ -135,27 +152,24 @@ node test/backend1.js
 node test/backend2.js
 ```
 
----
-
-## 📊 Dashboard
+Dashboard:
 
 ```bash
 cd dashboard
 npm install
 npm run dev
+# runs at http://localhost:5173
 ```
-
-Dashboard runs at `http://localhost:5173`
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /analytics` | Real-time gateway analytics — requests, response times, circuit breaker states, health status |
-| `GET /api/users` | Protected route — requires JWT |
-| `GET /api/public` | Public route — no auth required |
+| Endpoint | Auth | Description |
+|----------|------|-------------|
+| `GET /analytics` | No | Real-time gateway analytics |
+| `GET /api/users` | Yes (JWT) | Protected route |
+| `GET /api/public` | No | Public route |
 
 ### Generate JWT Token
 
@@ -163,20 +177,17 @@ Dashboard runs at `http://localhost:5173`
 node test/generateToken.js
 ```
 
-Use the token as: `Authorization: Bearer <token>`
-
----
-
-## 🌐 Live Demo
-
-Gateway: `http://3.109.56.77:3000/analytics`
+Use as: `Authorization: Bearer <token>`
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Runtime:** Node.js
-- **Cache / Rate Limiting:** Redis
-- **Logging:** Winston
-- **Dashboard:** React, Tailwind CSS, Recharts
-- **Infrastructure:** Docker, Docker Compose, AWS EC2
+| Layer | Technology |
+|-------|-----------|
+| Runtime | Node.js |
+| Edge Server | Nginx |
+| Cache / Rate Limiting | Redis |
+| Logging | Winston |
+| Dashboard | React, Tailwind CSS, Recharts |
+| Infrastructure | Docker, Docker Compose, AWS EC2 |
