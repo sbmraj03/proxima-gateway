@@ -24,6 +24,8 @@ services:
     image: redis:alpine
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
 
   backend1:
     build:
@@ -38,3 +40,6 @@ services:
       dockerfile: Dockerfile.backend2
     ports:
       - "4002:4002"
+
+volumes:
+  redis_data:
