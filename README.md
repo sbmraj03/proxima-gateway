@@ -192,3 +192,25 @@ Use as: `Authorization: Bearer <token>`
 | Logging | Winston |
 | Dashboard | React, Tailwind CSS, Recharts |
 | Infrastructure | Docker, Docker Compose, AWS EC2 |
+
+---
+
+## Performance
+
+### Load Test — 50 Concurrent Users (k6)
+
+| Metric | Result |
+|--------|--------|
+| Total Requests | 4431 |
+| Requests/sec | ~36 req/sec |
+| Avg Latency | 23ms |
+| P95 Latency | 29ms |
+| Response time < 500ms | 100% |
+
+### Rate Limiter Accuracy
+| Metric | Result |
+|--------|--------|
+| Concurrent Users | 50 |
+| Total Requests fired | 4431 |
+| Correctly throttled (429) | 79.93% |
+| Avg latency (passed requests) | 25ms |
