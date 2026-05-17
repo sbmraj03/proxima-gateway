@@ -3,4 +3,3 @@ dashboard/node_modules/
 logs/
 .env
 .env.docker
-test/generateToken.js

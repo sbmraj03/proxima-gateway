@@ -10,9 +10,9 @@ A production-grade API Gateway built from scratch in Node.js — featuring rever
 
 | | URL |
 |--|--|
-| **Gateway** | `http://3.109.56.77:3000` |
 | **Dashboard** | `http://3.109.56.77/dashboard` |
-
+| **Public API** | `http://3.109.56.77/api/public` |
+| **Analytics** | `http://3.109.56.77/analytics` |
 ---
 
 ## Features
@@ -133,8 +133,9 @@ docker-compose up --build
 
 | Service | URL |
 |---------|-----|
-| Gateway | `http://localhost:3000` |
 | Dashboard | `http://localhost/dashboard` |
+| Public API | `http://localhost/api/public` |
+| Analytics | `http://localhost/analytics` |
 
 ---
 
