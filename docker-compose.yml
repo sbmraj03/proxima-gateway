@@ -1,0 +1,28 @@
+services:
+  proxima:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  backend1:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend1
+    ports:
+      - "4001:4001"
+
+  backend2:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend2
+    ports:
+      - "4002:4002"
