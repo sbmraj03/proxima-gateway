@@ -1,4 +1,14 @@
 services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./dashboard/dist:/usr/share/nginx/dashboard
+    depends_on:
+      - proxima
+
   proxima:
     build: .
     ports:

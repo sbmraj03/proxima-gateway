@@ -4,11 +4,11 @@ import RequestsGraph from './components/RequestsGraph';
 
 function App() {
   const [analytics, setAnalytics] = useState(null);
-
+  
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const res = await fetch('http://localhost:3000/analytics');
+        const res = await fetch('/analytics');
         const data = await res.json();
         setAnalytics(data);
       } catch (err) {
